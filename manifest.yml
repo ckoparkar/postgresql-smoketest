@@ -1,0 +1,4 @@
+---
+applications:
+- name: postgresql-smoketest-app
+  memory: 1024M
