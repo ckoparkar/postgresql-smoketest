@@ -25,6 +25,15 @@ class PostgresqlSmoketest < Sinatra::Base
     conn.exec("SELECT 'ok'").values.first.first
   end
 
+  delete '/delete-database/:db_name' do |db_name|
+    connection.exec("DROP DATABASE #{db_name}")
+  end
+
+  delete '/delete-user/:username' do |username|
+    connection.exec("DROP OWNED BY #{username} CASCADE")
+    connection.exec("DROP ROLE #{username}")
+  end
+
   private
 
   def credentials
