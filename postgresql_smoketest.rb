@@ -7,6 +7,24 @@ class PostgresqlSmoketest < Sinatra::Base
     connection.exec("SELECT 'ok'").values.first.first
   end
 
+  put '/create-database/:db_name' do |db_name|
+    connection.exec("CREATE DATABASE #{db_name}")
+    connection.exec("REVOKE ALL ON DATABASE #{db_name} FROM public")
+  end
+
+  put '/create-user/:username/for/:db_name' do |username, db_name|
+    connection.exec("CREATE USER #{username} WITH PASSWORD '#{username}'")
+    connection.exec("GRANT ALL PRIVILEGES ON DATABASE #{db_name} TO #{username}")
+  end
+
+  get '/select-ok/on/:db_name/as/:username' do |db_name, username|
+    conn = PG.connect(host: credentials['hostname'],
+                      port: credentials['port'],
+                      dbname: db_name,
+                      user: username)
+    conn.exec("SELECT 'ok'").values.first.first
+  end
+
   private
 
   def credentials
